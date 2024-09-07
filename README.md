@@ -20,4 +20,4 @@ Installing SDL_ttf:
 
 ## Compiling with g++
 
-`$ g++ main.cpp -o {my_output_file} (sdl2-config --cflags --libs) -lSDL2_image -lSDL2_ttf`
+`$ g++ main.cpp -o {my_output_file} $(sdl2-config --cflags --libs) -lSDL2_image -lSDL2_ttf`
