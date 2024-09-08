@@ -1,8 +1,18 @@
 #include "game_engine.h"
+#include "graphic_engine.h"
 
-GameEngine::GameEngine() {
+/**
+ * Associate a texture id for a given asset.
+ */
+const std::unordered_map<TextureID, std::string> assets = {
+    { 0x01, "assets/character_1.png" },
+    { 0x02, "assets/character_2.png" }
+};
+
+GameEngine::GameEngine(GraphicEngine* const graphicEngine) {
     window = nullptr;
     renderer = nullptr;
+    this->graphicEngine = graphicEngine;
 }
 
 GameEngine::~GameEngine() {
@@ -11,6 +21,7 @@ GameEngine::~GameEngine() {
 
     IMG_Quit();
     SDL_Quit();
+    delete graphicEngine;
 }
 
 void GameEngine::initialize(const std::string& title, const int width, const int height) {
@@ -36,12 +47,21 @@ void GameEngine::initialize(const std::string& title, const int width, const int
     }
 
     SDL_SetWindowTitle(window, title.c_str());
+    graphicEngine->setRenderer(renderer);
 }
 
 void GameEngine::run() {
     SDL_Event event;
 
     isRunning = true;
+
+    for (auto const& asset : assets) {
+        const int id = asset.first;
+        std::cout << std::to_string(id) << std::endl;
+        sprites.push_back(Sprite(id, {0, 0, 32, 32}, "Sprite " + std::to_string(id)));
+        graphicEngine->loadTextures(id, asset.second);
+    }
+
     while (isRunning) {
         // TODO done here for now so we have an easy way to close the window, but should lay in a separate class
         // Capture any event
@@ -53,8 +73,17 @@ void GameEngine::run() {
             }
         }
 
-        
+
+        SDL_RenderClear(renderer);
+
+        for (int i = 0; i < sprites.size(); i++) {
+            SDL_Rect destRect = {0, i * 132, 100, 100};
+            Sprite sprite = sprites[i];
+            std::cout << "i = " << i << ", sprite = " << sprite.name << ", textureID = " << std::to_string(sprite.getTextureID()) << std::endl;
+            SDL_RenderCopy(renderer, graphicEngine->getTexture(sprite.getTextureID()), &sprite.getSrcRect(), &destRect);
+        }
 
         SDL_RenderPresent(renderer);
+        SDL_Delay(100);
     }
 }

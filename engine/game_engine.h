@@ -4,10 +4,12 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
+#include "graphic_engine.h"
+#include "../entities/sprite.h"
 
 class GameEngine {
     public:
-        GameEngine();
+        GameEngine(GraphicEngine* const graphicEngine);
         ~GameEngine();
 
         /**
@@ -28,13 +30,6 @@ class GameEngine {
         void run();
 
         /**
-         * Initialze all the SDL modules.
-         * 
-         * @param [out] window 
-         */
-        //void initialize(SDL_Window* window, SDL_Renderer* renderer);
-
-        /**
          * Destroy and clear all resources used by SDL modules.
          * This means, this method should be the last call. Any method call that required the window or renderer object will fail.
          * 
@@ -42,16 +37,15 @@ class GameEngine {
          * @param [in] renderer The pointer to the current renderer.
          */
         //void quit(SDL_Window* window, SDL_Renderer* renderer);
-
-        /**
-         * Start the game loop.
-         * The loop run indefinitely until `isRunning`
-         */
-        //void run();
+        
     private:
+        GraphicEngine* graphicEngine;
+
         SDL_Window* window;
         SDL_Renderer* renderer;
         bool isRunning;
+
+        std::vector<Sprite> sprites;
 };
 
 #endif
